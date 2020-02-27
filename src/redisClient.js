@@ -13,6 +13,8 @@ export default {
       no_ready_check: true,
       connection_name: connectionName,
       password: auth,
+      detect_buffers: true,
+      // return_buffers: true,
     };
 
     const client = redis.createClient(port, host, options);

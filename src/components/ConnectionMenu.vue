@@ -5,6 +5,30 @@
     <i :title="$t('message.redis_console')" class="connection-right-icon fa fa-terminal" @click.stop.prevent="openCli()"></i>
     <i :title="$t('message.edit_connection')" class="connection-right-icon el-icon-edit-outline" @click.stop.prevent="showEditConnection()"></i>
     <i :title="$t('message.del_connection')" class="connection-right-icon el-icon-delete" @click.stop.prevent="deleteConnection()"></i>
+
+  <!--   <el-popover
+      append-to-body
+      placement="top-start"
+      title="标题"
+      width="200"
+      trigger="hover"
+      content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
+      <i append-to-body slot="reference" @click.stop.prevent class="connection-right-icon el-icon-more"></i>
+    </el-popover> -->
+
+<!--     <el-dropdown append-to-body>
+      <span class="el-dropdown-link">
+        下拉菜单<i class="el-icon-arrow-down el-icon--right"></i>
+      </span>
+      <el-dropdown-menu slot="dropdown" append-to-body>
+        <el-dropdown-item>黄金糕</el-dropdown-item>
+        <el-dropdown-item>狮子头</el-dropdown-item>
+        <el-dropdown-item>螺蛳粉</el-dropdown-item>
+        <el-dropdown-item disabled>双皮奶</el-dropdown-item>
+        <el-dropdown-item divided>蚵仔煎</el-dropdown-item>
+      </el-dropdown-menu>
+    </el-dropdown> -->
+
   </div>
   <div :title="config.connectionName" class="connection-name">{{config.connectionName}}</div>
 

@@ -1,8 +1,8 @@
 <template>
   <!-- key list -->
   <ul class='key-list'>
-    <RightClickMenu :items='rightMenus' :clickValue='key' :key='key' v-for='key of keyList'>
-      <li class='key-item' :title='key'  @click='clickKey(key, $event)'>{{key}}</li>
+    <RightClickMenu :items='rightMenus' :clickValue='key' :key='key.toString()' v-for='key of keyList'>
+      <li class='key-item' :title='key'  @click='clickKey(key, $event)'>{{key.toString()}}</li>
     </RightClickMenu>
   </ul>
 </template>
@@ -107,11 +107,11 @@ export default {
     beginScanning(cursor, match, count, callback, minLength = null, lastList = []) {
       !minLength && (minLength = this.keysPageSize);
 
-      const promise = this.client.scanAsync(cursor, 'MATCH', match, 'COUNT', count).then((reply) => {
+      const promise = this.client.scanAsync(cursor, 'MATCH', Buffer.from(match), 'COUNT', count).then((reply) => {
         reply[1] = reply[1].concat(lastList);
 
         // key list length smaller than minLength
-        if ((reply[1].length < minLength) && (reply[0] !== '0')) {
+        if ((reply[1].length < minLength) && (reply[0] != '0')) {
           callback && callback(reply, true);
           return this.beginScanning(reply[0], match, count, callback, minLength, reply[1]);
         }

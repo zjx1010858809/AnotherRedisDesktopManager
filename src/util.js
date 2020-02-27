@@ -15,6 +15,10 @@ export default {
 
     return equal;
   },
+  toHex(string) {
+    const buf = Buffer.from(string);
+
+  },
   toUTF8(string) {
     return encodeURI(string).replace(/%/g, '\\x').toLowerCase();
   },

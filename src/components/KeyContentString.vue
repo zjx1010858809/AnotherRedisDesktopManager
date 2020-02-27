@@ -27,11 +27,33 @@ export default {
     initShow() {
       const key = this.syncKeyParams.keyName;
 
-      if (!key) {
-        return;
-      }
+      // if (!key) {
+      //   return;
+      // }
 
+      // this.client.getAsync(Buffer.from(key)).then((reply) => {
       this.client.getAsync(key).then((reply) => {
+
+        const str = reply.toString();
+        const buf = Buffer.from(str);
+
+        if (buf.equals(reply)) {
+          console.log('yes');
+          this.content = str;
+        }
+        else {
+          console.log('no');
+          const hex = reply.toString('hex');
+          console.log(hex);
+          let result = '';
+          for (var i = 0; i < hex.length; i+=2) {
+            result += '\\x' + hex.substr(i, 2).toUpperCase();
+          }
+          this.content = result;
+        }
+
+        return;
+
         // character not visible
         if (!this.$util.isVisible(reply)) {
           this.content = this.$util.toUTF8(reply);

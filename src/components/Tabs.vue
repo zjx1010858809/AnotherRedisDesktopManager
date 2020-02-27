@@ -100,7 +100,20 @@ export default {
       this.addTab(newTabItem, newTab);
     },
     addKeyTab(client, key, newTab = false) {
+      console.log(key, '===');
+      // return;
+      // const k = Buffer.from(key);
+      // key = Buffer.from("e5f0", 'hex');
+      // console.log(key.equals(k));
+      // return;
+      // client.get(key, (e, r) => {
+      //   console.log(r.toString('hex'));
+      // });
+      // return;
+      // return;
       client.typeAsync(key).then((type) => {
+        console.log('===type is==', type.toString(), '=====');
+        // return;
         // key not exists
         if (type === 'none') {
           this.$message.error({

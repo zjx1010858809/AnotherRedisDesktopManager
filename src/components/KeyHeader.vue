@@ -3,8 +3,8 @@
     <el-form :inline="true">
       <!-- key name -->
       <el-form-item>
-        <el-input ref="keyNameInput" v-model="syncKeyParams.keyName" @keyup.enter.native="renameKey" placeholder="KeyName">
-          <span slot="prepend" class="key-detail-type">{{ keyType }}</span>
+        <el-input ref="keyNameInput" v-model="syncKeyParams.keyName.toString()" @keyup.enter.native="renameKey" placeholder="KeyName">
+          <span slot="prepend" class="key-detail-type">{{ keyType.toString() }}</span>
           <i class="el-icon-check el-input__icon cursor-pointer"
             slot="suffix"
             :title="$t('message.click_enter_to_rename')"
@@ -90,6 +90,7 @@ export default {
       this.$emit('refreshContent');
     },
     renameKey() {
+      console.log(this.redisKeyLast, this.syncKeyParams.keyName);
       if (this.redisKeyLast === this.syncKeyParams.keyName) {
         return;
       }

@@ -103,7 +103,7 @@ export default {
         const hashData = [];
 
         for (const i in reply) {
-          hashData.push({ key: i, value: reply[i] });
+          hashData.push({ key: i, value: reply[i].toString() });
         }
 
         this.hashData = hashData;
