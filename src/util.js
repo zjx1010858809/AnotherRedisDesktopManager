@@ -15,9 +15,21 @@ export default {
 
     return equal;
   },
-  toHex(string) {
-    const buf = Buffer.from(string);
+  bufVisible(buf) {
+    const str = buf.toString();
+    const bufNew = Buffer.from(str);
 
+    return buf.equals(bufNew);
+  },
+  bufToHex(buf) {
+    const hex = buf.toString('hex');
+    let result = '';
+
+    for (var i = 0; i < hex.length; i+=2) {
+      result += '\\x' + hex.substr(i, 2);
+    }
+
+    return result;
   },
   toUTF8(string) {
     return encodeURI(string).replace(/%/g, '\\x').toLowerCase();

@@ -27,40 +27,17 @@ export default {
     initShow() {
       const key = this.syncKeyParams.keyName;
 
-      // if (!key) {
-      //   return;
-      // }
-
-      // this.client.getAsync(Buffer.from(key)).then((reply) => {
-      this.client.getAsync(key).then((reply) => {
-
-        const str = reply.toString();
-        const buf = Buffer.from(str);
-
-        if (buf.equals(reply)) {
-          console.log('yes');
-          this.content = str;
-        }
-        else {
-          console.log('no');
-          const hex = reply.toString('hex');
-          console.log(hex);
-          let result = '';
-          for (var i = 0; i < hex.length; i+=2) {
-            result += '\\x' + hex.substr(i, 2).toUpperCase();
-          }
-          this.content = result;
-        }
-
+      if (!key) {
         return;
+      }
 
-        // character not visible
-        if (!this.$util.isVisible(reply)) {
-          this.content = this.$util.toUTF8(reply);
+      this.client.getAsync(key).then((reply) => {
+        // visible character
+        if (this.$util.bufVisible(reply)) {
+          this.content = reply.toString();
         }
-
         else {
-          this.content = reply;
+          this.content = this.$util.bufToHex(reply);
         }
       });
     },
@@ -68,14 +45,14 @@ export default {
       const key = this.syncKeyParams.keyName;
       const ttl = this.syncKeyParams.keyTTL;
       const client = this.client;
-
+console.log('key & ttl is ', key, ttl);
       if (!key) {
         this.$parent.$parent.emptyKeyWhenAdding();
         return;
       }
 
       client.setAsync(key, this.content).then((reply) => {
-        if (reply === 'OK') {
+        if (reply == 'OK') {
           // if ttl is setted
           if (ttl > 0) {
             client.expireAsync(key, ttl).then(() => {});

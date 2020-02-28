@@ -3,7 +3,15 @@
     <el-form :inline="true">
       <!-- key name -->
       <el-form-item>
-        <el-input ref="keyNameInput" v-model="syncKeyParams.keyName.toString()" @keyup.enter.native="renameKey" placeholder="KeyName">
+<!--         <el-input ref="keyNameInput" v-model="syncKeyParams.keyName" @keyup.enter.native="renameKey" placeholder="KeyName">
+          <span slot="prepend" class="key-detail-type">{{ keyType.toString() }}</span>
+          <i class="el-icon-check el-input__icon cursor-pointer"
+            slot="suffix"
+            :title="$t('message.click_enter_to_rename')"
+            @click="renameKey">
+          </i>
+        </el-input> -->
+        <el-input ref="keyNameInput" :value="keyInputValue" @change='syncKeyParams.keyName=$event' @keyup.enter.native="renameKey" placeholder="KeyName">
           <span slot="prepend" class="key-detail-type">{{ keyType.toString() }}</span>
           <i class="el-icon-check el-input__icon cursor-pointer"
             slot="suffix"
@@ -46,6 +54,16 @@ export default {
     };
   },
   props: ['client', 'redisKey', 'keyType', 'syncKeyParams'],
+  computed: {
+    keyInputValue() {
+      const keyName = this.syncKeyParams.keyName;
+
+      if (this.$util.bufVisible(keyName)) {
+        return keyName;
+      }
+      return this.$util.bufToHex(keyName)
+    },
+  },
   methods: {
     initShow() {
       const client = this.client;
