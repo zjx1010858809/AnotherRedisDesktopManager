@@ -2,7 +2,8 @@
   <!-- key list -->
   <ul class='key-list'>
     <RightClickMenu :items='rightMenus' :clickValue='key' :key='key.toString()' v-for='key of keyList'>
-      <li class='key-item' :title='key'  @click='clickKey(key, $event)'>{{key.toString()}}</li>
+      <!-- <li class='key-item' :title='key'  @click='clickKey(key, $event)'>{{key.toString()}}</li> -->
+      <li class='key-item' :title='$util.bufToString(key)'  @click='clickKey(key, $event)'>{{$util.bufToString(key)}}</li>
     </RightClickMenu>
   </ul>
 </template>

@@ -56,12 +56,7 @@ export default {
   props: ['client', 'redisKey', 'keyType', 'syncKeyParams'],
   computed: {
     keyInputValue() {
-      const keyName = this.syncKeyParams.keyName;
-
-      if (this.$util.bufVisible(keyName)) {
-        return keyName;
-      }
-      return this.$util.bufToHex(keyName)
+      return this.$util.bufToString(this.syncKeyParams.keyName);
     },
   },
   methods: {

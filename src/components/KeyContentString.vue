@@ -32,13 +32,7 @@ export default {
       }
 
       this.client.getAsync(key).then((reply) => {
-        // visible character
-        if (this.$util.bufVisible(reply)) {
-          this.content = reply.toString();
-        }
-        else {
-          this.content = this.$util.bufToHex(reply);
-        }
+        this.content = this.$util.bufToString(reply);
       });
     },
     execSave() {

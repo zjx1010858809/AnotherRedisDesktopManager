@@ -22,14 +22,22 @@ export default {
     return buf.equals(bufNew);
   },
   bufToHex(buf) {
-    const hex = buf.toString('hex');
-    let result = '';
+    let result = buf.toJSON().data.map(item => {
+      if (item >= 32 && item <= 126) {
+        return String.fromCharCode(item);
+      }
+      return "\\x" + item.toString(16);
+    });
 
-    for (var i = 0; i < hex.length; i+=2) {
-      result += '\\x' + hex.substr(i, 2);
+    return result.join('');
+  },
+  bufToString(buf) {
+    console.log(buf.toString(), '====');
+    if (this.bufVisible(buf)) {
+      return buf.toString();
     }
 
-    return result;
+    return this.bufToHex(buf);
   },
   toUTF8(string) {
     return encodeURI(string).replace(/%/g, '\\x').toLowerCase();
