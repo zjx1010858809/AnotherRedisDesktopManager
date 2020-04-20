@@ -103,16 +103,29 @@ export default {
     },
     initDatabaseSelect() {
       this.client.config('get', 'databases').then((reply) => {
-        if (reply[1]) {
-          this.dbs = [...Array(parseInt(reply[1])).keys()];
-        }
-        else {
-          this.dbs =  [...Array(16).keys()];
-        }
+        this.dbs = [...Array(parseInt(reply[1])).keys()];
       }).catch((e) => {
         // config command may be renamed
         this.dbs =  [...Array(16).keys()];
+        // read dbs from info
+        this.getDatabasesFromInfo();
       });
+    },
+    getDatabasesFromInfo() {
+      if (!this.client) {
+        return;
+      }
+
+      this.client.info().then((info) => {
+        try{
+          let lastDB = info.trim().split('\n').pop().match(/db(\d+)/)[1];
+          lastDB = parseInt(lastDB);
+
+          if (lastDB > 16) {
+            this.dbs = [...Array(lastDB + 1).keys()];
+          }
+        }catch (e) {};
+      }).catch(() => {});
     },
     changeDb(dbIndex = false) {
       if (dbIndex !== false) {
@@ -139,11 +152,14 @@ export default {
         return;
       }
 
-      let promise = this.setDefaultValue(this.newKeyName, this.selectedNewKeyType);
+      // key to buffer
+      const key = Buffer.from(this.newKeyName);
+
+      let promise = this.setDefaultValue(key, this.selectedNewKeyType);
 
       promise.then(() => {
-        this.$bus.$emit('refreshKeyList', this.client, this.newKeyName, 'add');
-        this.$bus.$emit('clickedKey', this.client, this.newKeyName, true);
+        this.$bus.$emit('refreshKeyList', this.client, key, 'add');
+        this.$bus.$emit('clickedKey', this.client, key, true);
       });
 
       this.newKeyDialog = false;

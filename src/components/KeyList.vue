@@ -5,9 +5,9 @@
       <RightClickMenu
         :items='rightMenus'
         :clickValue='key'
-        :key='key'
+        :key='key.toString()'
         v-for='key of keyList'>
-        <li class='key-item' :title='key'  @click='clickKey(key, $event)'>{{key}}</li>
+        <li class='key-item' :title='key'  @click='clickKey(key, $event)'>{{$util.bufToString(key)}}</li>
       </RightClickMenu>
     </ul>
 
@@ -126,7 +126,7 @@ export default {
         // scan count is bigger when in search mode
         scanOption.match != '*' && (scanOption.count = this.searchPageSize);
 
-        let stream = node.scanStream(scanOption);
+        let stream = node.scanBufferStream(scanOption);
         this.scanStreams.push(stream);
 
         stream.on('data', keys => {
@@ -147,6 +147,17 @@ export default {
             // search input icon recover
             this.$parent.$parent.$parent.$refs.operateItem.searchIcon = 'el-icon-search';
           }
+        });
+
+        stream.on('error', (e) => {
+          this.$message.error({
+            message: 'Stream On Error: ' +  e.message,
+            duration: 1500,
+          });
+
+          setTimeout(() => {
+            this.$bus.$emit('closeConnection');
+          }, 50);
         });
 
         stream.on('end', () => {
@@ -192,10 +203,11 @@ export default {
         return false;
       }
 
-      const index = this.keyList.indexOf(key);
-
-      if (index > -1) {
-        this.keyList.splice(index, 1);
+      for (let i in this.keyList) {
+        if (this.keyList[i].equals(key)) {
+          this.keyList.splice(i, 1);
+          break;
+        }
       }
     },
   },

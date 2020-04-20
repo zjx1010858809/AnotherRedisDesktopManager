@@ -3,7 +3,12 @@
     <el-form :inline="true">
       <!-- key name -->
       <el-form-item>
-        <el-input ref="keyNameInput" v-model="keyName" @keyup.enter.native="renameKey" placeholder="KeyName">
+        <el-input
+          ref="keyNameInput"
+          :value="$util.bufToString(keyName)"
+          @change='changeKeyInput'
+          @keyup.enter.native="renameKey"
+          placeholder="KeyName">
           <span slot="prepend" class="key-detail-type">{{ keyType }}</span>
           <i class="el-icon-check el-input__icon cursor-pointer"
             slot="suffix"
@@ -25,14 +30,10 @@
         </el-input>
       </el-form-item>
 
-      <!-- del key btn -->
+      <!-- del refresh key btn -->
       <el-form-item>
-        <el-button type="danger" @click="deleteKey" icon="el-icon-delete" circle></el-button>
-      </el-form-item>
-
-      <!-- refresh key btn -->
-      <el-form-item>
-        <el-button type="success" @click="refreshKey" icon="el-icon-refresh" circle></el-button>
+        <el-button type="danger" @click="deleteKey" icon="el-icon-delete" ></el-button>
+        <el-button type="success" @click="refreshKey" icon="el-icon-refresh" ></el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -44,6 +45,7 @@ export default {
     return {
       keyName: this.redisKey,
       keyTTL: 0,
+      binary: false,
     };
   },
   props: ['client', 'redisKey', 'keyType'],
@@ -54,10 +56,14 @@ export default {
 
       // reset name input
       this.keyName = key;
+      this.binary  = !this.$util.bufVisible(key);
 
       client.ttl(key).then((reply) => {
         this.keyTTL = reply;
       });
+    },
+    changeKeyInput(keyInput) {
+      this.keyName = this.binary ? this.$util.xToBuffer(keyInput) : Buffer.from(keyInput);
     },
     refreshKey() {
       this.initShow();
@@ -65,14 +71,14 @@ export default {
     },
     deleteKey() {
       this.$confirm(
-        this.$t('message.confirm_to_delete_key', { key: this.redisKey }),
+        this.$t('message.confirm_to_delete_key', { key: this.$util.bufToString(this.redisKey) }),
         { type: 'warning' },
       )
       .then(() => {
         this.client.del(this.redisKey).then((reply) => {
           if (reply === 1) {
             this.$message.success({
-              message: `${this.redisKey} ${this.$t('message.delete_success')}`,
+              message: this.$t('message.delete_success'),
               duration: 1000,
             });
 
@@ -89,14 +95,14 @@ export default {
       }).catch(() => {});
     },
     renameKey() {
-      if (this.keyName === this.redisKey) {
+      if (this.keyName.equals(this.redisKey)) {
         return;
       }
 
       this.client.rename(this.redisKey, this.keyName).then((reply) => {
         if (reply === 'OK') {
           this.$message.success({
-            message: `${this.redisKey} rename to ${this.keyName} ${this.$t('message.modify_success')}`,
+            message: this.$t('message.modify_success'),
             duration: 1000,
           });
 
@@ -131,7 +137,7 @@ export default {
       this.client.expire(this.redisKey, this.keyTTL).then((reply) => {
         if (reply) {
           this.$message.success({
-            message: `${this.redisKey} ttl ${this.keyTTL} ${this.$t('message.modify_success')}`,
+            message: this.$t('message.modify_success'),
             duration: 1000,
           });
 
